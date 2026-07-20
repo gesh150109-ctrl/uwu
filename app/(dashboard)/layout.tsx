@@ -1,14 +1,17 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 
-interface DashboardLayoutProps {
+import { createClient } from "@/lib/supabase/server";
+import DashboardLayout from "@/components/layout/DashboardLayout";
+import { getProfile } from "@/services/profile/get-profile";
+
+interface Props {
   children: ReactNode;
 }
 
-export default async function DashboardLayout({
+export default async function Layout({
   children,
-}: DashboardLayoutProps) {
+}: Props) {
   const supabase = await createClient();
 
   const {
@@ -20,9 +23,18 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
+  const profile = await getProfile(user.id);
+
+  if (!profile) {
+    redirect("/completar-perfil");
+  }
+
   return (
-    <main className="min-h-screen bg-slate-950 text-white">
+    <DashboardLayout
+      nombre={profile.nombres}
+      esAdmin={profile.es_admin ?? false}
+    >
       {children}
-    </main>
+    </DashboardLayout>
   );
 }

@@ -139,31 +139,49 @@ export type Database = {
       }
       materiales: {
         Row: {
-          archivo_url: string
+          archivo_nombre: string | null
+          archivo_path: string | null
+          archivo_tamano: number | null
+          archivo_url: string | null
+          categoria: string | null
           created_at: string
           descripcion: string | null
           id: string
-          sesion_id: string
-          subido_por: string | null
+          sesion_id: string | null
+          subido_por: string
+          tipo: Database["public"]["Enums"]["tipo_material"] | null
           titulo: string
+          updated_at: string | null
         }
         Insert: {
-          archivo_url: string
+          archivo_nombre?: string | null
+          archivo_path?: string | null
+          archivo_tamano?: number | null
+          archivo_url?: string | null
+          categoria?: string | null
           created_at?: string
           descripcion?: string | null
           id?: string
-          sesion_id: string
-          subido_por?: string | null
+          sesion_id?: string | null
+          subido_por: string
+          tipo?: Database["public"]["Enums"]["tipo_material"] | null
           titulo: string
+          updated_at?: string | null
         }
         Update: {
-          archivo_url?: string
+          archivo_nombre?: string | null
+          archivo_path?: string | null
+          archivo_tamano?: number | null
+          archivo_url?: string | null
+          categoria?: string | null
           created_at?: string
           descripcion?: string | null
           id?: string
-          sesion_id?: string
-          subido_por?: string | null
+          sesion_id?: string | null
+          subido_por?: string
+          tipo?: Database["public"]["Enums"]["tipo_material"] | null
           titulo?: string
+          updated_at?: string | null
         }
         Relationships: [
           {
@@ -222,6 +240,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notificaciones: {
+        Row: {
+          created_at: string
+          enlace: string | null
+          id: string
+          leida: boolean
+          mensaje: string
+          tipo: Database["public"]["Enums"]["tipo_notificacion"]
+          titulo: string
+          usuario_id: string
+        }
+        Insert: {
+          created_at?: string
+          enlace?: string | null
+          id?: string
+          leida?: boolean
+          mensaje: string
+          tipo?: Database["public"]["Enums"]["tipo_notificacion"]
+          titulo: string
+          usuario_id: string
+        }
+        Update: {
+          created_at?: string
+          enlace?: string | null
+          id?: string
+          leida?: boolean
+          mensaje?: string
+          tipo?: Database["public"]["Enums"]["tipo_notificacion"]
+          titulo?: string
+          usuario_id?: string
+        }
+        Relationships: []
       }
       perfiles: {
         Row: {
@@ -365,6 +416,7 @@ export type Database = {
           id: string
           motivo: string | null
           nombres: string
+          perfil_id: string | null
           revisado_por: string | null
           telefono: string | null
         }
@@ -378,6 +430,7 @@ export type Database = {
           id?: string
           motivo?: string | null
           nombres: string
+          perfil_id?: string | null
           revisado_por?: string | null
           telefono?: string | null
         }
@@ -391,10 +444,18 @@ export type Database = {
           id?: string
           motivo?: string | null
           nombres?: string
+          perfil_id?: string | null
           revisado_por?: string | null
           telefono?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "solicitudes_perfil_id_fkey"
+            columns: ["perfil_id"]
+            isOneToOne: false
+            referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "solicitudes_revisado_por_fkey"
             columns: ["revisado_por"]
@@ -413,6 +474,7 @@ export type Database = {
           fecha_fin: string | null
           fecha_inicio: string
           id: string
+          solicitud_id: string | null
           tipo: Database["public"]["Enums"]["tipo_votacion"]
           titulo: string
         }
@@ -424,6 +486,7 @@ export type Database = {
           fecha_fin?: string | null
           fecha_inicio?: string
           id?: string
+          solicitud_id?: string | null
           tipo: Database["public"]["Enums"]["tipo_votacion"]
           titulo: string
         }
@@ -435,6 +498,7 @@ export type Database = {
           fecha_fin?: string | null
           fecha_inicio?: string
           id?: string
+          solicitud_id?: string | null
           tipo?: Database["public"]["Enums"]["tipo_votacion"]
           titulo?: string
         }
@@ -444,6 +508,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "perfiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "votaciones_solicitud_id_fkey"
+            columns: ["solicitud_id"]
+            isOneToOne: false
+            referencedRelation: "solicitudes"
             referencedColumns: ["id"]
           },
         ]
@@ -492,7 +563,56 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cerrar_votacion: { Args: { p_votacion_id: string }; Returns: undefined }
+      crear_notificacion: {
+        Args: {
+          p_enlace?: string
+          p_mensaje: string
+          p_tipo?: Database["public"]["Enums"]["tipo_notificacion"]
+          p_titulo: string
+          p_usuario_id: string
+        }
+        Returns: string
+      }
+      crear_votacion_general: {
+        Args: { p_descripcion?: string; p_titulo: string }
+        Returns: string
+      }
+      desactivar_miembro: {
+        Args: { p_miembro_id: string; p_observaciones?: string }
+        Returns: undefined
+      }
+      es_administrador_activo: { Args: never; Returns: boolean }
+      es_miembro_activo: { Args: never; Returns: boolean }
+      notificar_miembros_activos: {
+        Args: {
+          p_enlace?: string
+          p_mensaje: string
+          p_tipo?: Database["public"]["Enums"]["tipo_notificacion"]
+          p_titulo: string
+        }
+        Returns: number
+      }
       obtener_correo_por_codigo: { Args: { p_codigo: string }; Returns: string }
+      reactivar_miembro: { Args: { p_miembro_id: string }; Returns: undefined }
+      revisar_solicitud: {
+        Args: {
+          p_decision: Database["public"]["Enums"]["estado_solicitud"]
+          p_solicitud_id: string
+        }
+        Returns: undefined
+      }
+      validar_solicitud_aprobada: {
+        Args: { p_codigo: string; p_correo: string }
+        Returns: boolean
+      }
+      votar_solicitud: {
+        Args: {
+          p_votacion_id: string
+          p_voto: Database["public"]["Enums"]["opcion_voto"]
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       estado_asistencia: "PRESENTE" | "MEDIA_FALTA" | "FALTA" | "JUSTIFICADA"
@@ -508,6 +628,13 @@ export type Database = {
         | "ENCARGADO_CELULARES"
         | "COORDINADOR_AULA"
         | "TESORERO"
+      tipo_material: "PDF" | "PPT" | "DOCX" | "ZIP" | "LINK" | "VIDEO" | "OTRO"
+      tipo_notificacion:
+        | "SESION"
+        | "VOTACION"
+        | "SOLICITUD"
+        | "MATERIAL"
+        | "SISTEMA"
       tipo_votacion: "INGRESO" | "GENERAL"
     }
     CompositeTypes: {
@@ -649,6 +776,14 @@ export const Constants = {
         "ENCARGADO_CELULARES",
         "COORDINADOR_AULA",
         "TESORERO",
+      ],
+      tipo_material: ["PDF", "PPT", "DOCX", "ZIP", "LINK", "VIDEO", "OTRO"],
+      tipo_notificacion: [
+        "SESION",
+        "VOTACION",
+        "SOLICITUD",
+        "MATERIAL",
+        "SISTEMA",
       ],
       tipo_votacion: ["INGRESO", "GENERAL"],
     },

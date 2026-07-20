@@ -1,4 +1,4 @@
-import SolicitudForm from "@/components/solicitud/solicitud-form";
+import SolicitudForm from "@/components/solicitud/solicitud-from";
 
 export default function SolicitarIngresoPage() {
   return (

@@ -11,10 +11,13 @@ import {
   FolderOpen,
   Vote,
   User,
-  Shield,
 } from "lucide-react";
 
-const menu = [
+interface SidebarProps {
+  esAdmin: boolean;
+}
+
+const menuAdmin = [
   {
     title: "Dashboard",
     href: "/dashboard",
@@ -29,6 +32,11 @@ const menu = [
     title: "Asistencia",
     href: "/asistencia",
     icon: ClipboardCheck,
+  },
+  {
+    title: "Solicitudes",
+    href: "/solicitudes",
+    icon: Users,
   },
   {
     title: "Miembros",
@@ -52,11 +60,42 @@ const menu = [
   },
 ];
 
-export default function Sidebar() {
+const menuMember = [
+  {
+    title: "Dashboard",
+    href: "/dashboard",
+    icon: LayoutDashboard,
+  },
+  {
+    title: "Sesiones",
+    href: "/sesiones",
+    icon: Calendar,
+  },
+  {
+    title: "Materiales",
+    href: "/materiales",
+    icon: FolderOpen,
+  },
+  {
+    title: "Votaciones",
+    href: "/votaciones",
+    icon: Vote,
+  },
+  {
+    title: "Mi perfil",
+    href: "/perfil",
+    icon: User,
+  },
+];
+
+export default function Sidebar({
+  esAdmin,
+}: SidebarProps) {
   const pathname = usePathname();
 
+  const menu = esAdmin ? menuAdmin : menuMember;
   return (
-    <aside className="flex h-screen w-72 flex-col border-r border-slate-800 bg-slate-950 text-white">
+    <aside className="sticky top-0 flex h-screen w-72 shrink-0 flex-col border-r border-slate-800 bg-slate-950 text-white">
 
       <div className="flex flex-col items-center border-b border-slate-800 p-8">
 
@@ -99,16 +138,6 @@ export default function Sidebar() {
           );
         })}
       </nav>
-
-      {/* Visible solo cuando exista el rol administrador */}
-      <div className="border-t border-slate-800 p-4">
-        <button
-          className="hidden w-full items-center gap-3 rounded-xl px-4 py-3 text-slate-300 transition hover:bg-slate-800"
-        >
-          <Shield size={20} />
-          Administración
-        </button>
-      </div>
     </aside>
   );
 }
