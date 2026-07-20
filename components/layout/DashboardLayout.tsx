@@ -1,5 +1,4 @@
-import Sidebar from "./Sidebar";
-import Navbar from "./Navbar";
+import DashboardShell from "./DashboardShell";
 
 import { getUnreadNotificationsCount } from "@/services/notifications/get-unread-count";
 
@@ -18,20 +17,14 @@ export default async function DashboardLayout({
     await getUnreadNotificationsCount();
 
   return (
-    <div className="flex min-h-screen bg-slate-900">
-      <Sidebar esAdmin={esAdmin} />
-
-      <main className="min-w-0 flex-1">
-        <Navbar
-          nombre={nombre}
-          rol={esAdmin ? "Administrador" : "Miembro"}
-          notificacionesNoLeidas={notificacionesNoLeidas}
-        />
-
-        <div className="p-8">
-          {children}
-        </div>
-      </main>
-    </div>
+    <DashboardShell
+      nombre={nombre}
+      esAdmin={esAdmin}
+      notificacionesNoLeidas={
+        notificacionesNoLeidas
+      }
+    >
+      {children}
+    </DashboardShell>
   );
 }

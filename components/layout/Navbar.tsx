@@ -37,11 +37,14 @@ export default function Navbar({
       | undefined;
 
     let mounted = true;
+
     let animationTimeout: ReturnType<
       typeof setTimeout
     > | null = null;
 
-    async function updateUnreadCount(userId: string) {
+    async function updateUnreadCount(
+      userId: string,
+    ) {
       const { count, error } = await supabase
         .from("notificaciones")
         .select("id", {
@@ -127,18 +130,18 @@ export default function Navbar({
   }, []);
 
   return (
-    <header className="flex h-20 items-center justify-between border-b border-slate-800 bg-slate-950 px-8">
-      <div>
-        <h2 className="text-2xl font-bold text-white">
+    <header className="flex min-h-16 items-center justify-between border-b border-slate-800 bg-slate-950 px-3 pl-16 sm:px-4 sm:pl-16 md:h-20 md:px-8">
+      <div className="min-w-0">
+        <h2 className="truncate text-base font-bold text-white sm:text-lg md:text-2xl">
           ByteCode Platform
         </h2>
 
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="hidden text-sm text-slate-400 sm:block">
           Panel de gestión
         </p>
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex shrink-0 items-center gap-2 sm:gap-3 md:gap-6">
         <Link
           href="/notificaciones"
           aria-label={
@@ -170,8 +173,8 @@ export default function Navbar({
           )}
         </Link>
 
-        <div className="text-right">
-          <p className="font-semibold text-white">
+        <div className="hidden text-right sm:block">
+          <p className="max-w-32 truncate font-semibold text-white md:max-w-none">
             {nombre}
           </p>
 
@@ -180,7 +183,9 @@ export default function Navbar({
           </p>
         </div>
 
-        <LogoutButton />
+        <div className="scale-90 sm:scale-100">
+          <LogoutButton />
+        </div>
       </div>
     </header>
   );
