@@ -1,10 +1,13 @@
 "use client";
 
 import { useActionState } from "react";
-import { LoaderCircle, Save } from "lucide-react";
+import {
+  LoaderCircle,
+  Save,
+} from "lucide-react";
 
 import type { Tables } from "@/types/database.types";
-import type { SessionActionState } from "@/app/(dashboard)/sesiones/actions";
+import type { SessionFormState } from "@/components/sessions/SessionForm";
 
 type Session = Pick<
   Tables<"sesiones">,
@@ -20,15 +23,15 @@ type Session = Pick<
 
 interface SessionFormProps {
   action: (
-    state: SessionActionState,
+    state: SessionFormState,
     formData: FormData,
-  ) => Promise<SessionActionState>;
+  ) => Promise<SessionFormState>;
 
   session?: Session;
   submitLabel: string;
 }
 
-const initialState: SessionActionState = {
+const initialState: SessionFormState = {
   error: null,
 };
 
@@ -37,10 +40,8 @@ export default function SessionForm({
   session,
   submitLabel,
 }: SessionFormProps) {
-  const [state, formAction, isPending] = useActionState(
-    action,
-    initialState,
-  );
+  const [state, formAction, isPending] =
+    useActionState(action, initialState);
 
   return (
     <form
@@ -92,7 +93,9 @@ export default function SessionForm({
           id="descripcion"
           name="descripcion"
           rows={4}
-          defaultValue={session?.descripcion ?? ""}
+          defaultValue={
+            session?.descripcion ?? ""
+          }
           placeholder="Describe el contenido y objetivo de la sesión"
           className="w-full resize-none rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-500"
         />
@@ -148,7 +151,9 @@ export default function SessionForm({
             name="hora_inicio"
             type="time"
             required
-            defaultValue={session?.hora_inicio.slice(0, 5)}
+            defaultValue={
+              session?.hora_inicio.slice(0, 5)
+            }
             className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-cyan-500"
           />
         </div>
@@ -166,7 +171,9 @@ export default function SessionForm({
             name="hora_fin"
             type="time"
             required
-            defaultValue={session?.hora_fin.slice(0, 5)}
+            defaultValue={
+              session?.hora_fin.slice(0, 5)
+            }
             className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-cyan-500"
           />
         </div>
@@ -187,9 +194,17 @@ export default function SessionForm({
             defaultValue={session.estado}
             className="w-full rounded-xl border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none transition focus:border-cyan-500"
           >
-            <option value="PROGRAMADA">Programada</option>
-            <option value="REALIZADA">Realizada</option>
-            <option value="CANCELADA">Cancelada</option>
+            <option value="PROGRAMADA">
+              Programada
+            </option>
+
+            <option value="REALIZADA">
+              Realizada
+            </option>
+
+            <option value="CANCELADA">
+              Cancelada
+            </option>
           </select>
         </div>
       )}
@@ -209,7 +224,9 @@ export default function SessionForm({
             <Save size={18} />
           )}
 
-          {isPending ? "Guardando..." : submitLabel}
+          {isPending
+            ? "Guardando..."
+            : submitLabel}
         </button>
       </div>
     </form>
