@@ -99,17 +99,22 @@ export async function registrarUsuarioAction(
     );
 
   const {
-    data,
-    error: registroError,
-  } = await supabase.auth.signUp({
-    email: correo,
-    password,
-    options: siteUrl
+  data,
+  error: registroError,
+} = await supabase.auth.signUp({
+  email: correo,
+  password,
+  options: {
+    data: {
+      codigo_universitario: codigoUniversitario,
+    },
+    ...(siteUrl
       ? {
           emailRedirectTo: `${siteUrl}/login`,
         }
-      : undefined,
-  });
+      : {}),
+  },
+});
 
   if (registroError) {
     console.error(
